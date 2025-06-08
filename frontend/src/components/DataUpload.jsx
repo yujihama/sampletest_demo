@@ -56,14 +56,14 @@ export function DataUpload({
             multiple
             onChange={handleFolderSelect}
             disabled={isExecuting}
-            className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            className="file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
           />
           {selectedFolder && selectedFolder.length > 0 && (
-            <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="p-3 bg-green-50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Folder className="w-4 h-4 text-blue-600" />
-                  <span className="font-medium text-blue-800">
+                  <Folder className="w-4 h-4 text-green-600" />
+                  <span className="font-medium text-green-800">
                     フォルダ: {selectedFolder[0].webkitRelativePath.split('/')[0]}
                   </span>
                 </div>
@@ -92,7 +92,7 @@ export function DataUpload({
             accept=".xlsx,.xls"
             onChange={handleTemplateSelect}
             disabled={isExecuting}
-            className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+            className="file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
           />
           {selectedTemplate && (
             <div className="flex items-center justify-between p-2 bg-green-50 rounded">

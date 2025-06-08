@@ -99,14 +99,37 @@ function AppContent() {
     setProcedure(event.target.value)
   }
 
+  const startAndMonitorExecution = (threadId, runId) => {
+    api.monitorExecution(
+      threadId,
+      runId,
+      (progress) => {
+        setExecutionState(prev => ({
+          ...prev,
+          progress: progress.progress || prev.progress,
+          status: progress.status || prev.status
+        }))
+      },
+      (receivedInterruptData) => {
+        console.log('Received interrupt data in App:', receivedInterruptData);
+        const message = receivedInterruptData.message || 'interrupt が発生しました';
+        setInterruptMessage(message)
+        setShowHITL(true)
+        setExecutionState(prev => ({ ...prev, status: 'interrupted' }))
+        notifyHITL('問い合わせが発生しました')
+      },
+      (results) => {
+        setResults(results)
+        setShowResults(true)
+        setExecutionState(prev => ({ ...prev, status: 'idle', progress: 100 }))
+        notifyCompletion('実行が完了しました')
+        loadThreads() // 履歴を更新
+      }
+    )
+  }
+
   const handleExecute = async () => {
-    console.log('🚀 handleExecute called');
-    console.log('Current procedure:', procedure);
-    console.log('Selected sample folder:', selectedSampleFolder);
-    console.log('Selected template:', selectedTemplate);
-    
     if (!procedure.trim()) {
-      console.log('❌ Procedure is empty');
       notifyError('手続き内容を入力してください')
       return
     }
@@ -116,7 +139,7 @@ function AppContent() {
       return
     }
 
-    console.log('✅ Starting execution...');
+    console.log('Starting execution...');
     try {
       // テンプレートパスを設定（既にアップロード済み）
       let templatePath = null
@@ -125,9 +148,9 @@ function AppContent() {
       }
 
       // スレッド作成（メタデータにsample_data_pathとprocedureを設定）
-      console.log('📞 Creating thread with params:', { procedure, sample_data_path: selectedSampleFolder, templatePath });
+      console.log('Creating thread with params:', { procedure, sample_data_path: selectedSampleFolder, templatePath });
       const thread = await api.createThread(procedure, null, selectedSampleFolder, templatePath)
-      console.log('✅ Thread created:', thread);
+      console.log('Thread created:', thread);
       setCurrentThread(thread)
       
       // 実行開始（inputにprocedureとsample_data_pathを設定）
@@ -135,7 +158,7 @@ function AppContent() {
         procedure: procedure,
         sample_data_path: selectedSampleFolder
       };
-      console.log('📤 Execution input:', input);
+      console.log('Execution input:', input);
       const runResult = await api.startExecution(thread.thread_id, input)
       setExecutionState({
         status: 'running',
@@ -147,33 +170,7 @@ function AppContent() {
       notifyInfo('実行を開始しました')
       
       // 実行監視開始
-      api.monitorExecution(
-        thread.thread_id,
-        runResult.run_id,
-        (progress) => {
-          setExecutionState(prev => ({ 
-            ...prev, 
-            progress: progress.progress || prev.progress,
-            status: progress.status || prev.status
-          }))
-        },
-        (receivedInterruptData) => {
-          console.log('🔍 Received interrupt data in App:', receivedInterruptData);
-          // メッセージ文字列を抽出
-          const message = receivedInterruptData.message || 'interrupt が発生しました';
-          setInterruptMessage(message)
-          setShowHITL(true)
-          setExecutionState(prev => ({ ...prev, status: 'interrupted' }))
-          notifyHITL('人的確認が必要です')
-        },
-        (results) => {
-          setResults(results)
-          setShowResults(true)
-          setExecutionState(prev => ({ ...prev, status: 'idle', progress: 100 }))
-          notifyCompletion('実行が完了しました')
-          loadThreads() // 履歴を更新
-        }
-      )
+      startAndMonitorExecution(thread.thread_id, runResult.run_id)
       
     } catch (error) {
       console.error('Execution failed:', error)
@@ -184,43 +181,17 @@ function AppContent() {
 
   const handleHITLResponse = async (response) => {
     try {
-      console.log('🔄 Sending HITL response to resume execution:', response);
+      console.log('Sending HITL response to resume execution:', response);
       const runResult = await api.updateThreadState(currentThread.thread_id, response)
       
       setShowHITL(false)
       setExecutionState(prev => ({ ...prev, status: 'running' }))
       notifyInfo('回答を送信しました。実行を継続します。')
       
-      console.log('✅ Resume execution started with run_id:', runResult.run_id);
+      console.log('Resume execution started with run_id:', runResult.run_id);
       
       // 継続監視開始
-      api.monitorExecution(
-        currentThread.thread_id,
-        runResult.run_id,
-        (progress) => {
-          setExecutionState(prev => ({ 
-            ...prev, 
-            progress: progress.progress || prev.progress,
-            status: progress.status || prev.status
-          }))
-        },
-        (interruptData) => {
-          console.log('🔍 Received interrupt data in App (continue):', interruptData);
-          // メッセージ文字列を抽出
-          const message = interruptData.message || 'interrupt が発生しました';
-          setInterruptMessage(message)
-          setShowHITL(true)
-          setExecutionState(prev => ({ ...prev, status: 'interrupted' }))
-          notifyHITL('人的確認が必要です')
-        },
-        (results) => {
-          setResults(results)
-          setShowResults(true)
-          setExecutionState(prev => ({ ...prev, status: 'idle', progress: 100 }))
-          notifyCompletion('実行が完了しました')
-          loadThreads()
-        }
-      )
+      startAndMonitorExecution(currentThread.thread_id, runResult.run_id)
       
     } catch (error) {
       console.error('Failed to submit HITL response:', error)
@@ -332,9 +303,6 @@ function AppContent() {
             <h1 className="text-2xl font-bold text-gray-900">
               内部監査サンプルテストツール
             </h1>
-            <div className="text-sm text-gray-500">
-              User
-            </div>
           </div>
         </div>
       </header>

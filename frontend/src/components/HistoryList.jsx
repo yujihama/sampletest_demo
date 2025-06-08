@@ -109,7 +109,7 @@ export function HistoryList({ threads, onRefresh, onThreadSelect }) {
                   key={thread.thread_id} 
                   className="flex items-center justify-between p-2 border rounded cursor-pointer hover:bg-gray-50"
                   onClick={() => {
-                    console.log('🖱️ Thread clicked:', thread);
+                    console.log('Thread clicked:', thread);
                     onThreadSelect && onThreadSelect(thread.originalData || thread);
                   }}
                 >
@@ -120,10 +120,10 @@ export function HistoryList({ threads, onRefresh, onThreadSelect }) {
                       thread.status === 'running' ? 'secondary' :
                       thread.status === 'interrupted' ? 'outline' : 'default'
                     }>
-                      {thread.status === 'idle' ? '✅' : 
-                       thread.status === 'error' ? '❌' : 
-                       thread.status === 'running' ? '🔄' :
-                       thread.status === 'interrupted' ? '⏸️' : '❓'}
+                      {thread.status === 'idle' ? '完了　' : 
+                       thread.status === 'error' ? 'エラー' : 
+                       thread.status === 'running' ? '実行中' :
+                       thread.status === 'interrupted' ? '実行中' : ''}
                     </Badge>
                     <span className="text-sm">{thread.procedure}</span>
                   </div>
@@ -136,13 +136,6 @@ export function HistoryList({ threads, onRefresh, onThreadSelect }) {
           </div>
         </ScrollArea>
       </CardContent>
-      {/* デバッグ情報（開発時のみ表示） */}
-      {import.meta.env.DEV && threads && (
-        <div className="text-xs text-gray-400 p-2 border-t">
-          データ件数: {threads.length}件 | 
-          最新: {threads[0]?.created_at ? new Date(threads[0].created_at).toLocaleString() : 'なし'}
-        </div>
-      )}
     </Card>
   )
 }

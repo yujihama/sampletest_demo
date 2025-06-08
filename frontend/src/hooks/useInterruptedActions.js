@@ -149,7 +149,7 @@ export const useInterruptedActions = ({
         }
       );
       
-      console.log('🔄 Resume command sent via LangGraph client for thread:', threadData.thread.thread_id, 'with response:', responsePayload);
+      console.log('Resume command sent via LangGraph client for thread:', threadData.thread.thread_id, 'with response:', responsePayload);
 
       // スレッドデータを更新
       if (setThreadData) {

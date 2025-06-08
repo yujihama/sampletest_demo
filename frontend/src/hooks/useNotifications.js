@@ -7,7 +7,7 @@ export function useNotifications() {
     })
   }
   
-  const notifyHITL = (message = "人的確認が必要です") => {
+  const notifyHITL = (message = "問い合わせが発生しました") => {
     toast.error(message, {
       duration: 0, // 手動で閉じるまで表示
     })

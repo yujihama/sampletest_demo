@@ -44,10 +44,10 @@ export function ProcedureExecution({
             ))}
           </select>
           {selectedSampleFolder && (
-            <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="p-3 bg-green-50 rounded-lg">
               <div className="flex items-center gap-2">
-                <Folder className="w-4 h-4 text-blue-600" />
-                <span className="font-medium text-blue-800">
+                <Folder className="w-4 h-4 text-green-600" />
+                <span className="font-medium text-green-800">
                   選択中: {selectedSampleFolder}
                 </span>
               </div>
@@ -56,7 +56,7 @@ export function ProcedureExecution({
         </div>
 
         {/* 手続き内容 */}
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="procedure">手続き内容</Label>
           <Textarea 
             id="procedure"
@@ -76,10 +76,10 @@ export function ProcedureExecution({
           {isExecuting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              実行中...
+              手続き実施中...
             </>
           ) : (
-            '🚀 実行開始'
+            '手続き実施'
           )}
         </Button>
       </CardContent>
