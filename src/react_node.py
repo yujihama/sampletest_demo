@@ -3,9 +3,7 @@ from pydantic import BaseModel, Field
 from state import State
 from langchain_core.runnables import RunnableConfig
 from typing import Any, Dict, Sequence, TypedDict, Union
-from langgraph.types import Command
-from langchain_core.messages import ToolMessage, HumanMessage, BaseMessage
-import langchain
+from langchain_core.messages import HumanMessage, BaseMessage
 from langchain_community.tools import tool
 from langchain_openai import ChatOpenAI
 
@@ -16,13 +14,12 @@ from langgraph.prebuilt.interrupt import (
     HumanResponse,
 )
 from langgraph.types import interrupt
-import httpx
 import base64
 import os
 import fitz
 import logging
 
-from langgraph.graph.message import add_messages
+from config import SAMPLE_DATA_DIR
 from langgraph.managed import IsLastStep, RemainingSteps
 from typing_extensions import Annotated
 
@@ -107,7 +104,7 @@ def react_node(state: State, config: RunnableConfig) -> Dict[str, Any]:
     logger.info(f"--- Iteration {current_iteration}/{state.max_iterations} ---")
 
     if state.sample_data_path:
-        data_path = os.path.join("C:\\Users\\nyham\\work\\sampletest_3\\agent-inbox-langgraph-example\\data\\sample",state.sample_data_path)
+        data_path = os.path.join(SAMPLE_DATA_DIR, state.sample_data_path)
         sample_num = len(os.listdir(data_path))
 
     image_data = []

@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import  field
-from typing import TypedDict, Annotated
-from langgraph.graph.message import add_messages
+from typing import Annotated
 from langchain_core.pydantic_v1 import BaseModel, Field
-import pandas as pd
-import os
-from pathlib import Path
+
+from config import DEFAULT_FORMAT_FILE, FORMAT_DIR
 
 # _DEFAULT_EXCEL_FORMAT_DIR = Path("C:/Users/nyham/work/sampletest_3/agent-inbox-langgraph-example/data/format") # コメントアウト
 
@@ -41,10 +38,10 @@ class State(BaseModel):
     sample_data_path: str = Field(default="")
     iter_data: Annotated[list, append_iter_data] = Field(default=[])
     data_info: dict = Field(default_factory=dict)
-    format_path: str = Field(default="C:\\\\Users\\\\nyham\\\\work\\\\sampletest_3\\\\agent-inbox-langgraph-example\\\\data\\\\format\\\\サンプルテスト調書フォーマット.xlsx")
+    format_path: str = Field(default=str(DEFAULT_FORMAT_FILE))
     df: list = Field(default=[])
-    excel_file: str = Field(default="C:\\\\Users\\\\nyham\\\\work\\\\sampletest_3\\\\agent-inbox-langgraph-example\\\\data\\\\format\\\\サンプルテスト調書フォーマット.xlsx", description="Excelファイルパス（Excel入力欄特定ワークフロー用）")
-    output_dir: str = Field(default="C:\\\\Users\\\\nyham\\\\work\\\\sampletest_3\\\\agent-inbox-langgraph-example\\\\data\\\\format", description="出力ディレクトリ（Excel入力欄特定ワークフロー用）")
+    excel_file: str = Field(default=str(DEFAULT_FORMAT_FILE), description="Excelファイルパス（Excel入力欄特定ワークフロー用）")
+    output_dir: str = Field(default=str(FORMAT_DIR), description="出力ディレクトリ（Excel入力欄特定ワークフロー用）")
     output_excel_path: str = Field(default="", description="出力Excelファイルパス（Excel入力欄特定ワークフロー用）")
     excel_max_iterations: int = Field(default=5, description="Excel入力欄特定ワークフローの最大反復回数")
     excel_format_result: dict = Field(default_factory=dict, description="Excel入力欄特定ワークフローの最終結果（辞書形式）")

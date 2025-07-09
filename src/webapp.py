@@ -1,7 +1,6 @@
 from typing import List
 from fastapi import FastAPI, File, UploadFile
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 import os
 import asyncio
 from pathlib import Path

@@ -8,11 +8,10 @@ import base64
 import logging
 import tempfile
 from pathlib import Path
-from typing import Dict, List, Any, TypedDict, Annotated, Literal, Optional
+from typing import Dict, List, Literal, Optional, TypedDict
 
 # LangChain関連のインポート
-from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, END
 from pydantic import BaseModel, Field
@@ -567,9 +566,6 @@ def validate_with_multimodal_llm(state: ExcelFormState) -> ExcelFormState:
         
         final_output_dir = base_save_path / "format_data"
         final_output_dir.mkdir(exist_ok=True, parents=True)
-        
-        # 推定された入力欄情報
-        structured_fields = state["structured_fields"]
         
         # マルチモーダルLLMクライアントの初期化（structured_output使用）
         llm = ChatOpenAI(
